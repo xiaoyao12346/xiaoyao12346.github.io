@@ -175,6 +175,39 @@
         .media-container { margin: 15px 0; border-radius: 8px; overflow: hidden; background: #000; }
         .media-container img, .media-container video { width: 100%; display: block; }
 
+        /* --- 硬件画廊样式 --- */
+        .hardware-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hw-img-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .hw-img-box img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain; /* 完整显示，不裁剪图片 */
+            border-radius: 4px;
+            cursor: zoom-in;
+            transition: transform 0.3s;
+        }
+        .hw-img-box img:hover {
+            transform: scale(1.05);
+        }
+        .hw-img-label {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
         /* 技能标签 */
         .skills { display: flex; flex-wrap: wrap; gap: 10px; }
         .skill-tag {
@@ -260,7 +293,6 @@
         <!-- 头部信息 -->
         <div class="header reveal">
             <h1>姚耿峰</h1>
-            <!-- 打字机效果容器 -->
             <h2><span id="typewriter"></span><span class="cursor"></span></h2>
             <p style="color: var(--text-muted);">热爱底层技术，具有扎实的编程基础。善于快速学习新技术并应用于实际项目中。</p>
         </div>
@@ -275,20 +307,57 @@
         <div id="projects" class="section reveal">
             <div class="section-title">项目展示</div>
             
-            <!-- 项目卡片 1 -->
+            <!-- ================= PCB 硬件项目卡片 ================= -->
             <div class="project-card">
                 <div class="project-header">
-                    <span>某物联网设备控制系统</span> <!-- 暂时借用你的占位内容，可自行修改 -->
+                    <span>双层板设计与手工焊接测试</span>
+                    <span class="project-tech">Altium Designer / 手工焊接</span>
+                </div>
+                <p>独立完成双层 PCB 的原理图设计、布局布线，并完成打样后的元器件手工焊接与测试。具备扎实的硬件电路基础和动手能力。</p>
+                
+                <!-- 照片画廊展示区 (适配了你的4张图片和后缀名) -->
+                <div class="hardware-gallery">
+                    <!-- 图1：实物图 1 -->
+                    <div class="hw-img-box">
+                        <img src="pcb-board.jpg" alt="PCB实物图1" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">📸 打板实物图 (正面)</span>
+                    </div>
+                    
+                    <!-- 图2：实物图 2 (新增) -->
+                    <div class="hw-img-box">
+                        <img src="pcb-board2.jpg" alt="PCB实物图2" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">📸 打板实物图 (细节/反面)</span>
+                    </div>
+                    
+                    <!-- 图3：原理图 (后缀已改为 .png) -->
+                    <div class="hw-img-box">
+                        <img src="pcb-schematic.png" alt="原理图" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">📐 电路原理图</span>
+                    </div>
+
+                    <!-- 图4：PCB走线图 (后缀已改为 .png) -->
+                    <div class="hw-img-box">
+                        <img src="pcb-layout.png" alt="PCB Layout图" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">💻 PCB Layout图</span>
+                    </div>
+                </div>
+            </div>
+            <!-- ========================================================= -->
+
+            <!-- 原有的软件项目卡片 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <span>某物联网设备控制系统</span> 
                     <span class="project-tech">C/C++ + STM32</span>
                 </div>
                 <p>负责底层驱动开发与通信协议对接，优化系统功耗，提升设备续航时间 20%。</p>
                 
-                <!-- 占位图：如果你传了 project1.jpg，就会显示图片；没传则自动隐藏 -->
                 <div class="media-container">
                     <img src="project1.jpg" alt="项目截图" onerror="this.style.display='none'; this.parentElement.style.display='none';">
                 </div>
                 <a href="#" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">👉 查看源码</a>
             </div>
+
         </div>
 
         <!-- 技能标签 -->
@@ -299,8 +368,8 @@
                 <span class="skill-tag">Linux 环境开发</span>
                 <span class="skill-tag">STM32 / 单片机</span>
                 <span class="skill-tag">FreeRTOS</span>
+                <span class="skill-tag">Altium Designer</span>
                 <span class="skill-tag">Git 版本控制</span>
-                <span class="skill-tag">Python 脚本</span>
             </div>
         </div>
 
@@ -310,7 +379,6 @@
             <p>如果觉得我的经历合适，欢迎随时联系！</p>
             
             <div class="contact-area">
-                <!-- 已经自动填充你的真实信息 -->
                 <button class="action-btn btn-primary" onclick="copyToClipboard('2601576396@qq.com', this)">
                     📋 一键复制邮箱
                 </button>
@@ -321,7 +389,6 @@
                 
                 <br><br>
                 
-                <!-- PDF 下载占位：上传 resume.pdf 后即可生效 -->
                 <a href="resume.pdf" download class="action-btn btn-success">
                     📄 下载 PDF 版简历
                 </a>
@@ -356,7 +423,7 @@
             }
         });
 
-        /* --- 2. 打字机特效 (已修改为嵌入式方向) --- */
+        /* --- 2. 打字机特效 --- */
         const textArray = ["嵌入式软件开发工程师", "C/C++ 开发者", "底层系统探索者"];
         let textIndex = 0;
         let charIndex = 0;
@@ -464,7 +531,7 @@
         }
     </script>
 
-    <!-- 🔽 在这里加上了 GoatCounter 的统计代码 🔽 -->
+    <!-- GoatCounter 统计代码 -->
     <script data-goatcounter="https://yao.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
 
