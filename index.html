@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的简历 - 你的名字</title>
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* 简历主容器 */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* 头部信息 */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 2.2em;
+        }
+        .header h2 {
+            margin: 10px 0 0;
+            color: #3498db;
+            font-size: 1.2em;
+            font-weight: normal;
+        }
+        .contact-info {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .contact-info span {
+            margin: 0 10px;
+        }
+
+        /* 模块标题 */
+        .section-title {
+            font-size: 1.3em;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        /* 经历条目 */
+        .item {
+            margin-bottom: 20px;
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #333;
+        }
+        .item-sub {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        /* 技能标签 */
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .skill-tag {
+            background-color: #e8f4fd;
+            color: #2980b9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+
+        /* 响应式设计：手机端适配 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            .item-header {
+                flex-direction: column;
+            }
+            .contact-info span {
+                display: block;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 头部信息 -->
+    <div class="header">
+        <h1>王小遥</h1> <!-- 修改为你的名字 -->
+        <h2>前端开发工程师</h2> <!-- 修改为你的职位 -->
+        <div class="contact-info">
+            <span>📞 138-XXXX-XXXX</span> <!-- 修改为你的电话 -->
+            <span>✉️ xiaoyao@example.com</span> <!-- 修改为你的邮箱 -->
+            <span>🔗 github.com/xiaoyao12346</span> <!-- 修改为你的 GitHub -->
+        </div>
+    </div>
+
+    <!-- 个人简介 -->
+    <div>
+        <div class="section-title">关于我</div>
+        <p>热爱编程，具有扎实的前端基础，熟练掌握 HTML/CSS/JavaScript。具备良好的代码习惯和团队协作能力，善于快速学习新技术并应用于实际项目中。</p>
+    </div>
+
+    <!-- 技能列表 -->
+    <div>
+        <div class="section-title">专业技能</div>
+        <div class="skills">
+            <span class="skill-tag">HTML5</span>
+            <span class="skill-tag">CSS3</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">Vue.js</span>
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">Webpack</span>
+        </div>
+    </div>
+
+    <!-- 工作经历 -->
+    <div>
+        <div class="section-title">工作经历</div>
+        
+        <div class="item">
+            <div class="item-header">
+                <span>某科技公司 | 前端开发工程师</span>
+                <span>2021.07 - 至今</span>
+            </div>
+            <div class="item-sub">负责公司核心业务系统的前端开发与维护。</div>
+            <ul>
+                <li>使用 Vue.js 重构了老旧的后台管理系统，提升页面加载速度 30%。</li>
+                <li>与后端开发工程师配合，完成 API 接口的对接与联调。</li>
+                <li>参与前端组件库的搭建和维护，提高团队开发效率。</li>
+            </ul>
+        </div>
+
+        <div class="item">
+            <div class="item-header">
+                <span>某互联网公司 | 前端开发实习生</span>
+                <span>2020.09 - 2021.06</span>
+            </div>
+            <div class="item-sub">参与电商平台移动端 H5 页面的开发。</div>
+            <ul>
+                <li>负责活动页面的切图与交互开发，还原 UI 设计稿。</li>
+                <li>解决不同手机机型和浏览器上的兼容性问题。</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 教育背景 -->
+    <div>
+        <div class="section-title">教育背景</div>
+        <div class="item">
+            <div class="item-header">
+                <span>某某大学 | 计算机科学与技术 | 本科</span>
+                <span>2017.09 - 2021.06</span>
+            </div>
+            <div class="item-sub">主修课程：数据结构、计算机网络、操作系统、数据库原理等。</div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
