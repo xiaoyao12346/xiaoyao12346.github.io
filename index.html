@@ -175,37 +175,79 @@
         .media-container { margin: 15px 0; border-radius: 8px; overflow: hidden; background: #000; }
         .media-container img, .media-container video { width: 100%; display: block; }
 
-        /* --- 硬件画廊样式 --- */
+        /* ================= 全新硬件画廊样式 ================= */
         .hardware-gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(2, 1fr); /* 默认两列 */
             gap: 15px;
             margin: 20px 0;
         }
+        /* 第一排大图：横跨两列 */
+        .hw-main-img {
+            grid-column: span 2;
+        }
+        
         .hw-img-box {
-            background: #fff;
+            background: #ffffff; /* 图纸通常是白底，用纯白背景衬托 */
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
+            cursor: zoom-in; /* 鼠标变成放大镜 */
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .hw-img-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
         .hw-img-box img {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: contain; /* 完整显示，不裁剪图片 */
             border-radius: 4px;
-            cursor: zoom-in;
-            transition: transform 0.3s;
         }
-        .hw-img-box img:hover {
-            transform: scale(1.05);
+        .hw-main-img img {
+            height: 320px; /* 第一排大图高度 */
         }
         .hw-img-label {
             display: block;
-            margin-top: 10px;
+            margin-top: 8px;
             font-size: 0.85em;
-            color: var(--text-muted);
+            color: #444444; /* 深色模式下也为深灰字，因为背景是白的 */
             font-weight: bold;
+        }
+
+        /* ================= 灯箱（弹窗放大） ================= */
+        #lightbox {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); /* 半透明黑底 */
+            backdrop-filter: blur(5px); /* 毛玻璃效果 */
+        }
+        #lightbox img {
+            margin: auto;
+            display: block;
+            max-width: 95%;
+            max-height: 90vh;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        #lightbox .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
         /* 技能标签 */
@@ -264,12 +306,16 @@
         #back-to-top.show { opacity: 1; visibility: visible; }
         #back-to-top:hover { background: var(--primary-hover); transform: translateY(-3px); }
 
+        /* 手机端适配 */
         @media (max-width: 600px) {
             .container { margin-top: 80px; padding: 20px; }
             nav { padding: 10px 15px; }
             .nav-links { gap: 10px; }
             nav a { font-size: 0.8em; }
             .project-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .hardware-gallery { grid-template-columns: 1fr; } /* 手机端变成一列 */
+            .hw-main-img { grid-column: span 1; }
+            .hw-main-img img { height: 200px; }
         }
     </style>
 </head>
@@ -311,34 +357,42 @@
             <div class="project-card">
                 <div class="project-header">
                     <span>双层板设计与手工焊接测试</span>
-                    <span class="project-tech">Altium Designer / 手工焊接</span>
+                    <span class="project-tech">Altium Designer / STM32 / 51</span>
                 </div>
-                <p>独立完成双层 PCB 的原理图设计、布局布线，并完成打样后的元器件手工焊接与测试。具备扎实的硬件电路基础和动手能力。</p>
+                <p>独立完成 STM32 及 51 单片机双层 PCB 的原理图设计、布局布线，并完成打样后的元器件手工焊接与测试。具备扎实的硬件电路基础和动手能力。<b>（点击图片可放大查看细节）</b></p>
                 
-                <!-- 照片画廊展示区 (适配了你的4张图片和后缀名) -->
+                <!-- 照片画廊展示区 -->
                 <div class="hardware-gallery">
-                    <!-- 图1：实物图 1 -->
-                    <div class="hw-img-box">
-                        <img src="pcb-board.jpg" alt="PCB实物图1" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
-                        <span class="hw-img-label">📸 打板实物图 (正面)</span>
-                    </div>
-                    
-                    <!-- 图2：实物图 2 (新增) -->
-                    <div class="hw-img-box">
-                        <img src="pcb-board2.jpg" alt="PCB实物图2" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
-                        <span class="hw-img-label">📸 打板实物图 (细节/反面)</span>
-                    </div>
-                    
-                    <!-- 图3：原理图 (后缀已改为 .png) -->
-                    <div class="hw-img-box">
-                        <img src="pcb-schematic.png" alt="原理图" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
-                        <span class="hw-img-label">📐 电路原理图</span>
+                    <!-- 第一排：横跨两列的大图 -->
+                    <div class="hw-img-box hw-main-img" onclick="openLightbox('pcb-board.jpg')">
+                        <img src="pcb-board.jpg" alt="STM32焊接实物图" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">📸 STM32 核心板打板后焊接完成实物图</span>
                     </div>
 
-                    <!-- 图4：PCB走线图 (后缀已改为 .png) -->
-                    <div class="hw-img-box">
-                        <img src="pcb-layout.png" alt="PCB Layout图" onclick="window.open(this.src)" onerror="this.parentElement.style.display='none';">
-                        <span class="hw-img-label">💻 PCB Layout图</span>
+                    <!-- 第二排：两张实物对比 -->
+                    <div class="hw-img-box" onclick="openLightbox('pcb-board2.jpg')">
+                        <img src="pcb-board2.jpg" alt="32与51打样板" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">📸 STM32 与 51 打板裸板 (未焊接)</span>
+                    </div>
+                    <div class="hw-img-box" onclick="openLightbox('pcb-layout.png')">
+                        <img src="pcb-layout.png" alt="STM32 PCB Layout" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">💻 STM32 PCB Layout 图</span>
+                    </div>
+
+                    <!-- 第三排：原理图 -->
+                    <div class="hw-img-box" onclick="openLightbox('pcb-schematic.png')">
+                        <img src="pcb-schematic.png" alt="STM32 原理图" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">📐 STM32 原理图</span>
+                    </div>
+                    <div class="hw-img-box" onclick="openLightbox('51pcb-layout.png')">
+                        <img src="51pcb-layout.png" alt="51 PCB Layout" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">💻 51 单片机 PCB Layout 图</span>
+                    </div>
+
+                    <!-- 第四排：51原理图 -->
+                    <div class="hw-img-box hw-main-img" onclick="openLightbox('51pcb-schematic.png')">
+                        <img src="51pcb-schematic.png" alt="51 原理图" onerror="this.parentElement.style.display='none';">
+                        <span class="hw-img-label">📐 51 单片机原理图</span>
                     </div>
                 </div>
             </div>
@@ -366,10 +420,10 @@
             <div class="skills">
                 <span class="skill-tag">C / C++</span>
                 <span class="skill-tag">Linux 环境开发</span>
-                <span class="skill-tag">STM32 / 单片机</span>
+                <span class="skill-tag">STM32 / 51单片机</span>
                 <span class="skill-tag">FreeRTOS</span>
                 <span class="skill-tag">Altium Designer</span>
-                <span class="skill-tag">Git 版本控制</span>
+                <span class="skill-tag">手工焊接与测试</span>
             </div>
         </div>
 
@@ -400,9 +454,38 @@
     <!-- 回到顶部按钮 -->
     <div id="back-to-top" title="回到顶部">⬆</div>
 
+    <!-- 全屏灯箱弹窗 -->
+    <div id="lightbox">
+        <span class="close-btn" onclick="closeLightbox()">&times;</span>
+        <img id="lightbox-img" src="" alt="大图">
+    </div>
+
     <!-- 交互脚本 -->
     <script>
-        /* --- 1. 主题切换 (深色/浅色) --- */
+        /* --- 1. 灯箱弹窗逻辑 --- */
+        function openLightbox(src) {
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox').style.display = 'block';
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
+        // 点击黑色背景区域也可以关闭
+        document.getElementById('lightbox').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLightbox();
+            }
+        });
+        // 按 ESC 键也可以关闭
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        /* --- 2. 主题切换 (深色/浅色) --- */
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         
@@ -423,7 +506,7 @@
             }
         });
 
-        /* --- 2. 打字机特效 --- */
+        /* --- 3. 打字机特效 --- */
         const textArray = ["嵌入式软件开发工程师", "C/C++ 开发者", "底层系统探索者"];
         let textIndex = 0;
         let charIndex = 0;
@@ -456,7 +539,7 @@
         }
         document.addEventListener("DOMContentLoaded", () => setTimeout(type, 1000));
 
-        /* --- 3. 滚动进度条 & 回顶部按钮 --- */
+        /* --- 4. 滚动进度条 & 回顶部按钮 --- */
         const progressBar = document.getElementById('progress-bar');
         const backToTopBtn = document.getElementById('back-to-top');
 
@@ -477,7 +560,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        /* --- 4. 滚动进入动画 --- */
+        /* --- 5. 滚动进入动画 --- */
         const revealElements = document.querySelectorAll('.reveal');
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -493,7 +576,7 @@
 
         revealElements.forEach(el => revealObserver.observe(el));
 
-        /* --- 5. 一键复制功能 --- */
+        /* --- 6. 一键复制功能 --- */
         function copyToClipboard(text, btnElement) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
