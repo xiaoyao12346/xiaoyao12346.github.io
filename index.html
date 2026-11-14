@@ -175,6 +175,82 @@
         .media-container { margin: 15px 0; border-radius: 8px; overflow: hidden; background: #000; }
         .media-container img, .media-container video { width: 100%; display: block; }
 
+        /* ================= 演示视频：默认直接展示，点原生播放键才播放 ================= */
+        .video-wrap {
+            background: linear-gradient(135deg, #1b1b1b, #2e2e2e);
+            border: 1px solid var(--card-border);
+        }
+        .video-wrap video {
+            width: 100%;
+            max-height: 460px;
+            background: #000;
+            outline: none;
+        }
+        .video-fallback {
+            display: none;
+            padding: 56px 20px;
+            text-align: center;
+            color: #cfcfcf;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+        .video-fallback.show { display: block; }
+
+        /* ================= 功能模块卡片 ================= */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin: 14px 0 18px;
+        }
+        .feature-item {
+            background: var(--container-bg);
+            border: 1px solid var(--card-border);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 6px;
+            padding: 12px 14px;
+        }
+        .feature-item h5 {
+            margin: 0 0 6px;
+            font-size: 0.97em;
+            color: var(--text-main);
+        }
+        .feature-item p {
+            margin: 0;
+            font-size: 0.87em;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ================= 按键操作表 ================= */
+        .key-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0 6px;
+            font-size: 0.9em;
+        }
+        .key-table th, .key-table td {
+            border: 1px solid var(--card-border);
+            padding: 8px 10px;
+            text-align: left;
+        }
+        .key-table th {
+            background: rgba(52, 152, 219, 0.08);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .key-table td { color: var(--text-muted); }
+
+        .spec-line {
+            font-size: 0.86em;
+            color: var(--text-muted);
+            background: rgba(52, 152, 219, 0.06);
+            border: 1px dashed var(--card-border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin: 14px 0 4px;
+        }
+
         /* 项目复盘小标题与列表 */
         .project-card h4 {
             margin: 18px 0 6px;
@@ -324,6 +400,7 @@
             .project-header { flex-direction: column; align-items: flex-start; gap: 5px; }
             .hardware-gallery { grid-template-columns: 1fr; } /* 手机端变成一列 */
             .hw-main-img { grid-column: span 1; }
+            .feature-grid { grid-template-columns: 1fr; } /* 功能卡片手机端单列 */
             .hw-main-img img { height: 200px; }
         }
     </style>
@@ -371,8 +448,67 @@
                 <p><b>项目背景：</b>桌面场景下，时间、天气、温湿度、计时分散在多个设备，查看不便；用 STM32F411 + 256×64 4bit 灰度屏做一屏整合，并在 128KB RAM 内兼顾联网与续航。</p>
                 <p><b>技术栈：</b>C / STM32F411 / LVGL 8.3.11 / SSD1322 / ESP8266 AT / AHT20 / BMP280 / MPU6050 / Keil MDK</p>
 
-                <div class="media-container">
-                    <video src="deskclock-demo.mp4" controls onerror="this.style.display='none'; this.parentElement.style.display='none';"></video>
+                <!-- 演示视频：直接展示在页面上，点击播放器的播放键即可播放 -->
+                <div class="media-container video-wrap">
+                    <video id="deskclock-video"
+                           src="deskclock-demo.mp4"
+                           poster="deskclock-poster.jpg"
+                           controls
+                           playsinline
+                           preload="metadata">
+                        当前浏览器不支持 HTML5 视频播放。
+                    </video>
+                    <div class="video-fallback" id="video-fallback">
+                        🎬 演示视频待上传：把 deskclock-demo.mp4 放在本页同一目录即可<br>
+                        （可选）再放一张封面图 deskclock-poster.jpg
+                    </div>
+                </div>
+
+                <h4>✨ 功能详解</h4>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>🕒 时钟显示</h5>
+                        <p>大字显示时、分，同屏常驻日期与星期。时间由硬件 RTC 维持，<b>断电后仍继续走时</b>，重新上电直接显示正确时间，不会回到默认值；联网成功后自动同步网络时间，中国时区自动换算，无需手动校准。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🌡 环境监测</h5>
+                        <p>每秒采集一次温湿度与气压，经限幅 + 低通滤波后显示，读数稳定不跳动闪烁。独立趋势页以 <b>60 格曲线</b>呈现近 3 小时变化（3 分钟/格），可观察短时走向，例如气压持续下降往往意味着天气转坏。传感器异常时自动丢弃越界值，保留上次有效读数。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🌤 天气</h5>
+                        <p>联网获取所在城市多日预报（白天/夜间天气、最高最低温、风向风速），天气数据本地缓存，<b>断网期间仍可查看</b>最后一次结果。同时不依赖网络，用自身气压传感器做本地趋势推断（3 小时总变化 + 近 1 小时突变 + 曲线加速/减速形态），输出晴 / 多云 / 阴 / 雨 / 暴雨，可识别「跌幅末端加速」这类暴雨前兆。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>⏱ 时光工坊</h5>
+                        <p>倒计时、番茄钟、闹钟三合一。番茄钟工作/休息时长可分别设置（默认 25 / 5 分钟）并<b>自动切换阶段</b>，仅工作阶段自然结束才累加「今日专注次数」；闹钟到点振动提醒、任意键关闭；三者可同时运行、互不干扰。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>⚙️ 系统设置</h5>
+                        <p>手表式滚动列表共 8 项：时间校准、番茄钟时长、振动总开关、WiFi 配网、屏幕亮度（低/中/高）、息屏时间（30s / 1min / 5min / 永不）、蜂鸣器、敲击唤醒灵敏度（三档防误触）。改动即时生效，无需重启。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📶 配网与联网</h5>
+                        <p>进入配网后屏幕直接提示热点名与访问地址，手机连上设备热点、浏览器打开 <b>192.168.4.1</b> 填写 WiFi 名称、密码与城市即可完成配置，<b>无需 App、无需串口</b>。配置掉电保存、上电自动重连；网络异常每 5 秒重试，连续 6 次失败后暂停联网以省电，稍后自动恢复。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🔋 低功耗待机</h5>
+                        <p>无操作达到设定时长后自动息屏并进入深度休眠。<b>休眠期间每 3 分钟静默采样一次</b>补入趋势曲线，但不会点亮屏幕，用户完全无感；按任意键或轻敲设备即可唤醒，画面立即恢复、无需重新加载。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>👆 三键交互</h5>
+                        <p>全部操作由 3 颗按键完成，短按与长按组合出完整控制。设置页分「浏览 → 导航 → 编辑」三态，避免误操作：浏览态翻页不碰设置项、导航态当前行<b>整行反相高亮</b>、编辑态当前字段<b>二次反相高亮</b>，一眼看出正在改哪一项。该交互在时光工坊等页面保持一致。</p>
+                    </div>
+                </div>
+
+                <table class="key-table">
+                    <tr><th style="width: 34%;">按键操作</th><th>作用</th></tr>
+                    <tr><td>左 / 右短按</td><td>翻页、移动光标、调整数值</td></tr>
+                    <tr><td>中间短按</td><td>进入列表 / 进入编辑 / 切换当前编辑字段</td></tr>
+                    <tr><td>中间长按</td><td>逐级返回上一级</td></tr>
+                </table>
+
+                <div class="spec-line">
+                    <b>规格：</b>256×64 OLED（4 位灰度，暗底高亮）· 30 个页面 · 3 键 + 敲击唤醒 · 温湿度 / 气压 / 加速度传感器 · WiFi 联网（HTTP + NTP）· 振动提醒（蜂鸣器接口预留）· RAM 约 101KB / 128KB · Flash 约 277KB / 512KB
                 </div>
 
                 <h4>🔧 开发中遇到的问题及解决</h4>
@@ -393,7 +529,7 @@
                     <li>OTA 固件升级 + 深度低功耗 / 电池供电。</li>
                 </ul>
 
-                <a href="#" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">👉 查看源码 / 演示视频</a>
+                <a href="#" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: bold;">👉 查看源码</a>
             </div>
             <!-- ================================================================= -->
 
@@ -609,7 +745,17 @@
 
         revealElements.forEach(el => revealObserver.observe(el));
 
-        /* --- 6. 一键复制功能 --- */
+        /* --- 6. 演示视频：文件不存在时给出提示，但不破坏页面布局 --- */
+        const demoVideo = document.getElementById('deskclock-video');
+        const videoFallback = document.getElementById('video-fallback');
+        if (demoVideo) {
+            demoVideo.addEventListener('error', function () {
+                demoVideo.style.display = 'none';
+                if (videoFallback) videoFallback.classList.add('show');
+            });
+        }
+
+        /* --- 7. 一键复制功能 --- */
         function copyToClipboard(text, btnElement) {
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
