@@ -171,6 +171,37 @@
             padding: 3px 10px;
             border-radius: 4px;
         }
+
+        /* ================= 查看源码按钮 ================= */
+        .project-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 14px 0 4px;
+        }
+        .btn-source {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background: #24292f;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 600;
+            border: 1px solid #24292f;
+            transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+        }
+        .btn-source:hover {
+            background: #3a4249;
+            border-color: #3a4249;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+        }
+        .btn-source svg { width: 16px; height: 16px; fill: currentColor; flex: none; }
+        .project-links-note { font-size: 0.84em; color: var(--text-muted); }
         
         .media-container { margin: 15px 0; border-radius: 8px; overflow: hidden; background: #000; }
         .media-container img, .media-container video { width: 100%; display: block; }
@@ -432,7 +463,7 @@
         <!-- 关于我 -->
         <div id="about" class="section reveal">
             <div class="section-title">关于我</div>
-            <p>广州软件学院电子与计算机工程专业（2027 届本科），专注嵌入式软件开发。独立完成 STM32F411 + LVGL 桌面智能时钟等完整项目，熟悉 C、STM32、FreeRTOS、常见通信协议（I2C/SPI/UART）与硬件调试，具备从驱动到 UI、联网、低功耗的全流程开发能力。</p>
+            <p>广州软件学院电子与计算机工程专业（2027 届本科），专注嵌入式软件开发。独立完成 STM32F411 + LVGL 桌面智能时钟等完整项目，参与 ESP32-S3 端侧 AI 设备「智龙守望」并负责模型训练与部署，熟悉 C、STM32、FreeRTOS、常见通信协议（I2C/SPI/UART）与硬件调试，具备从驱动到 UI、联网、低功耗的全流程开发能力。</p>
         </div>
 
         <!-- 项目展示 -->
@@ -447,6 +478,15 @@
                 </div>
                 <p><b>项目背景：</b>桌面场景下，时间、天气、温湿度、计时分散在多个设备，查看不便；用 STM32F411 + 256×64 4bit 灰度屏做一屏整合，并在 128KB RAM 内兼顾联网与续航。</p>
                 <p><b>技术栈：</b>C / STM32F411 / LVGL 8.3.11 / SSD1322 / ESP8266 AT / AHT20 / BMP280 / MPU6050 / Keil MDK</p>
+
+                <!-- 查看源码 -->
+                <div class="project-links">
+                    <a class="btn-source" href="https://github.com/xiaoyao12346/deskclock" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+                        查看源码
+                    </a>
+                    <span class="project-links-note">GitHub · MIT License</span>
+                </div>
 
                 <!-- 演示视频：直接展示在页面上，点击播放器的播放键即可播放 -->
                 <div class="media-container video-wrap">
@@ -544,6 +584,97 @@
             </div>
             <!-- ================================================================= -->
 
+            <!-- ================= 软件项目：智龙守望（端侧 AI 伴学设备） ================= -->
+            <div class="project-card">
+                <div class="project-header">
+                    <span>智龙守望 · 端侧 AI 学习陪伴设备（团队项目）</span>
+                    <span class="project-tech">ESP32-S3 / TFLite Micro / LVGL</span>
+                </div>
+                <p><b>项目背景：</b>桌面学习最大的敌人是注意力：手机一拿起来就收不回来，事后又说不清自己到底专注了多久。智龙守望把摄像头、AI 推理和计时做进一台小设备——它<b>在本地判断你是专注、走神还是离座</b>，用奶龙角色的表情和语音当场提醒，并在结束后给你一份真实的专注统计。</p>
+                <p><b>技术栈：</b>ESP32-S3 / TensorFlow Lite Micro / MobileNetV2 迁移学习 / ESP-IDF / LVGL / MQTT / 离线语音模块（SU-03T）/ Python（TensorFlow·OpenCV）</p>
+                <p><b>我的职责：</b>负责整条 <b>AI 模型链路</b>——数据采集与清洗、模型训练与验证、TFLite 量化导出，并把模型部署进 ESP32-S3 完成端侧推理。</p>
+
+                <!-- ========== 演示视频占位（等你上传） ========== -->
+                <div class="media-container video-wrap">
+                    <video id="nailong-video"
+                           src="nailong-demo.mp4"
+                           poster="nailong-poster.jpg"
+                           controls
+                           playsinline
+                           preload="metadata">
+                        当前浏览器不支持 HTML5 视频播放。
+                    </video>
+                    <div class="video-fallback" id="nailong-video-fallback">
+                        🎬 演示视频待上传：把 nailong-demo.mp4 放在本页同一目录即可<br>
+                        （可选）再放一张封面图 nailong-poster.jpg
+                    </div>
+                </div>
+                <!-- ============================================ -->
+
+                <h4>✨ 功能详解</h4>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>🎯 专注度识别</h5>
+                        <p>摄像头持续取帧，在设备本地把当前状态判为 <b>专注 / 走神 / 离座</b> 三类。走神与离座分开建模，是因为两者的应对方式完全不同：走神该被轻轻提醒，离座则应当暂停计时等你回来，混成一类会让统计全部失真。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🧠 端侧推理</h5>
+                        <p>模型以 TFLite Micro 形式跑在 ESP32-S3 上，张量区放在 PSRAM，<b>画面不出设备、不需要联网</b>。既省掉了上传带宽与云端费用，也避开了摄像头对着书桌办公最敏感的那个问题——隐私。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📚 学习计时与状态机</h5>
+                        <p>支持设定学习时长（默认 25 分钟），开始后自动累计有效专注时间。<b>检测到离座即暂停计时</b>，回座后继续；结束后写入当日统计，回答「我今天到底学了多久」这个问题，而不是只看墙上的钟。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🗣 离线语音交互</h5>
+                        <p>外接离线语音模块，唤醒词「你好奶龙」，支持「开始学习」「结束学习」「我回来了」「现在怎么样」「今天表现」等指令。<b>全程离线识别、不依赖网络</b>，说一句话就能操作，不用腾出手去按按钮。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🐉 奶龙形象界面</h5>
+                        <p>基于 LVGL 自绘的奶龙角色界面：平时呼吸起伏，专注时有对应动画，计时走针另有独立的刀形动画页。<b>用表情代替数字</b>，抬眼一扫就知道自己现在的状态，比盯着冷冰冰的倒计时更有陪伴感。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>☁️ 数据上报与配套</h5>
+                        <p>设备通过 MQTT 把专注记录上报到本地服务端，落库后可在安卓端 App 查看历史与统计；服务端接入大模型，可基于你的学习记录给出阶段性反馈。<b>数据留在自己电脑上</b>，整套系统局域网内即可闭环运行。</p>
+                    </div>
+                </div>
+
+                <div class="spec-line">
+                    <b>规格：</b>ESP32-S3（含 PSRAM）· OV 系列摄像头 · 96×96 输入 / 3 类分类模型 · TensorFlow Lite Micro 端侧推理 · 离线语音模块（串口 115200）· LVGL 图形界面 · WiFi + MQTT · 安卓 App + Python 服务端
+                </div>
+
+                <h4>🔬 我负责的 AI 链路</h4>
+                <ul>
+                    <li><b>数据采集与清洗：</b>编写引导式采集脚本，按「专注 / 走神 / 离座」分目录自动落盘并去重；同时导入公开的 YOLOv8 检测数据集，按标注框裁成分类样本（<code>import_yolov8.py</code>），补足单一场景下样本多样性不足的问题。</li>
+                    <li><b>模型训练：</b>以 ImageNet 预训练的 <b>MobileNetV2</b> 为骨干做迁移学习，接 Dropout + 3 类 Softmax。采用两阶段训练——先冻结骨干训练 40 轮，再解冻顶部若干层微调 12 轮，配合 EarlyStopping 保留验证集最优权重，避免小数据集上的过拟合。</li>
+                    <li><b>有效性验证：</b>独立验证脚本输出混淆矩阵与各类别准确率，重点看「走神」与「专注」之间的混淆——这两类的边界最模糊，也最影响最终体验。</li>
+                    <li><b>量化导出与部署：</b>导出 TFLite 模型后转换成 <b>16 字节对齐的 C 数组</b>（TFLM 的硬性要求），链接进固件；推理时张量区优先分配到 PSRAM，模型类别索引与固件端标签数组严格一一对应，任一处顺序写错都会让分类结果整体错位。</li>
+                    <li><b>踩过的坑：</b>输入的 float 张量与模型内 int8 算子混用时，<code>AllocateTensors()</code> 会静默失败而不报错——表现为推理永远输出同一个值。后来在初始化阶段显式检查张量类型组合并打印日志，才把这类问题定位出来。</li>
+                </ul>
+
+                <h4>⚖️ 项目优缺点</h4>
+                <p><b>优点</b></p>
+                <ul>
+                    <li><b>隐私友好：</b>摄像头画面全程不出设备，只在本地输出一个类别结果，从架构上就不存在「视频被上传」的可能。</li>
+                    <li><b>离线可用：</b>识别、语音、计时都能断网运行，MQTT 上报只是增强功能，网络异常不影响核心体验。</li>
+                    <li><b>软硬一体：</b>模型不是跑在服务器上的 demo，而是真正经过量化、对齐、内存约束后塞进单片机的产物。</li>
+                </ul>
+                <p><b>缺点与改进方向</b></p>
+                <ul>
+                    <li><b>类别边界依赖场景：</b>「走神」的判定标准因人而异，换一个坐姿、换一种桌面光照，准确率就会波动。→ 持续补充自采数据，按场景分组做交叉验证。</li>
+                    <li><b>模型体积与内存占用偏高：</b>骨干网络对这颗 MCU 来说仍然偏重，张量区要吃掉数 MB PSRAM。→ 尝试更小的骨干并做 int8 全量化，进一步压缩模型与峰值内存。</li>
+                    <li><b>语音目前偏单向：</b>命令词表的配置已完成，固件侧的接收与状态联动还在补齐。→ 打通语音 → 状态机的完整闭环。</li>
+                </ul>
+
+                <h4>🚀 后续再开发</h4>
+                <ul>
+                    <li>模型轻量化与 int8 全量化，降低内存占用、提升推理帧率。</li>
+                    <li>增加「专注时长趋势」长期统计与阶段性学习报告。</li>
+                    <li>语音交互闭环与更多陪伴动作，让设备从「监工」更像「同学」。</li>
+                </ul>
+            </div>
+            <!-- ================================================================= -->
+
             <!-- ================= PCB 硬件项目卡片 ================= -->
             <div class="project-card">
                 <div class="project-header">
@@ -600,6 +731,9 @@
                 <span class="skill-tag">FreeRTOS</span>
                 <span class="skill-tag">LVGL 图形库</span>
                 <span class="skill-tag">ESP8266 / WiFi</span>
+                <span class="skill-tag">ESP32-S3 / ESP-IDF</span>
+                <span class="skill-tag">TensorFlow / TFLite Micro</span>
+                <span class="skill-tag">MobileNetV2 迁移学习</span>
                 <span class="skill-tag">状态机与事件队列</span>
                 <span class="skill-tag">Linux 环境开发</span>
                 <span class="skill-tag">Altium Designer</span>
@@ -687,7 +821,7 @@
         });
 
         /* --- 3. 打字机特效 --- */
-        const textArray = ["嵌入式软件开发工程师", "C/C++ 开发者", "底层系统探索者"];
+        const textArray = ["嵌入式软件开发工程师", "C/C++ 开发者", "端侧 AI 实践者"];
         let textIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
@@ -757,14 +891,17 @@
         revealElements.forEach(el => revealObserver.observe(el));
 
         /* --- 6. 演示视频：文件不存在时给出提示，但不破坏页面布局 --- */
-        const demoVideo = document.getElementById('deskclock-video');
-        const videoFallback = document.getElementById('video-fallback');
-        if (demoVideo) {
-            demoVideo.addEventListener('error', function () {
-                demoVideo.style.display = 'none';
-                if (videoFallback) videoFallback.classList.add('show');
+        function bindVideoFallback(videoId, fallbackId) {
+            const videoEl = document.getElementById(videoId);
+            const fallbackEl = document.getElementById(fallbackId);
+            if (!videoEl) return;
+            videoEl.addEventListener('error', function () {
+                videoEl.style.display = 'none';
+                if (fallbackEl) fallbackEl.classList.add('show');
             });
         }
+        bindVideoFallback('deskclock-video', 'video-fallback');
+        bindVideoFallback('nailong-video', 'nailong-video-fallback');
 
         /* --- 7. 一键复制功能 --- */
         function copyToClipboard(text, btnElement) {
