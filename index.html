@@ -347,6 +347,15 @@
             border-color: #2a2f36;
         }
         .hw-img-dark .hw-img-label { color: #d5d9de; }
+        /* 与竖版图同一行的横向图：拉高到同一高度，
+           否则整行被竖版图撑到 480px，旁边那张只有 200px，下面留一大片空白 */
+        .hw-img-fill img {
+            height: 480px;
+        }
+        @media (max-width: 600px) {
+            .hw-img-fill img { height: 360px; }
+            .hw-img-tall img { max-height: 360px; }
+        }
         .hw-img-label {
             display: block;
             margin-top: 8px;
@@ -726,7 +735,7 @@
                     </div>
 
                     <!-- 第二排：两张实物对比 -->
-                    <div class="hw-img-box" onclick="openLightbox('pcb-board2.webp')">
+                    <div class="hw-img-box hw-img-fill" onclick="openLightbox('pcb-board2.webp')">
                         <img src="pcb-board2.webp" alt="32与51打样板" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.classList.add('img-failed');">
                         <span class="hw-img-label">📸 STM32 与 51 打板裸板 (未焊接)</span>
                     </div>
