@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.className += ' js';</script>
     <title>姚耿峰 - 个人简历与作品集</title>
     <style>
         /* 1. 定义 CSS 变量（用于深色/浅色模式） */
@@ -136,13 +137,19 @@
             font-weight: bold;
         }
 
-        /* 4. 滚动进入动画 */
+        /* 4. 滚动进入动画
+           默认可见；只有当 JS 正常执行、给 <html> 打上 .js 类后才初始隐藏。
+           这样脚本出错、浏览器不支持 IntersectionObserver 时，也不会出现整块内容空白。 */
         .reveal {
+            opacity: 1;
+            transform: none;
+        }
+        .js .reveal {
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s ease-out;
         }
-        .reveal.active {
+        .js .reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
@@ -325,6 +332,21 @@
         .hw-main-img img {
             height: 320px; /* 第一排大图高度 */
         }
+        /* 竖版图（如 PCB Layout 导出图）：按宽度适配并限制最大高度，
+           否则固定 height:200px 会把 2160x3102 的竖图压成 139px 宽的窄条 */
+        .hw-img-tall img {
+            width: 100%;
+            height: auto;
+            max-height: 480px;
+            object-fit: contain;
+        }
+        /* 深色底导出图（嘉立创 EDA 黑底走线图）：容器也改深色，
+           避免黑图在白框里像一块"没加载出来的黑块" */
+        .hw-img-dark {
+            background: #0e1116;
+            border-color: #2a2f36;
+        }
+        .hw-img-dark .hw-img-label { color: #d5d9de; }
         .hw-img-label {
             display: block;
             margin-top: 8px;
@@ -332,6 +354,20 @@
             color: #444444; /* 深色模式下也为深灰字，因为背景是白的 */
             font-weight: bold;
         }
+        /* 图片加载失败时不要静默消失：给出可见提示，点击可重试 */
+        .hw-img-box.img-failed {
+            background: #f4f6f8;
+            border: 1px dashed #c2c9d1;
+        }
+        .hw-img-box.img-failed::before {
+            content: "⚠️ 图片未能加载，点击重试";
+            display: block;
+            padding: 40px 8px;
+            text-align: center;
+            font-size: 0.85em;
+            color: #8a9199;
+        }
+        .hw-img-box.img-failed .hw-img-label { color: #8a9199; }
 
         /* ================= 灯箱（弹窗放大） ================= */
         #lightbox {
@@ -684,34 +720,34 @@
                 <!-- 照片画廊展示区 -->
                 <div class="hardware-gallery">
                     <!-- 第一排：横跨两列的大图 -->
-                    <div class="hw-img-box hw-main-img" onclick="openLightbox('pcb-board.jpg')">
-                        <img src="pcb-board.jpg" alt="STM32焊接实物图" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
+                    <div class="hw-img-box hw-main-img" onclick="openLightbox('pcb-board.webp')">
+                        <img src="pcb-board.webp" alt="STM32焊接实物图" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.classList.add('img-failed');">
                         <span class="hw-img-label">📸 STM32 核心板打板后焊接完成实物图</span>
                     </div>
 
                     <!-- 第二排：两张实物对比 -->
-                    <div class="hw-img-box" onclick="openLightbox('pcb-board2.jpg')">
-                        <img src="pcb-board2.jpg" alt="32与51打样板" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
+                    <div class="hw-img-box" onclick="openLightbox('pcb-board2.webp')">
+                        <img src="pcb-board2.webp" alt="32与51打样板" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.classList.add('img-failed');">
                         <span class="hw-img-label">📸 STM32 与 51 打板裸板 (未焊接)</span>
                     </div>
-                    <div class="hw-img-box" onclick="openLightbox('pcb-layout.png')">
-                        <img src="pcb-layout.png" alt="STM32 PCB Layout" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
+                    <div class="hw-img-box hw-img-tall hw-img-dark" onclick="openLightbox('pcb-layout.webp')">
+                        <img src="pcb-layout.webp" alt="STM32 PCB Layout" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.classList.add('img-failed');">
                         <span class="hw-img-label">💻 STM32 PCB Layout 图</span>
                     </div>
 
                     <!-- 第三排：原理图 -->
-                    <div class="hw-img-box" onclick="openLightbox('pcb-schematic.png')">
-                        <img src="pcb-schematic.png" alt="STM32 原理图" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
+                    <div class="hw-img-box" onclick="openLightbox('pcb-schematic.webp')">
+                        <img src="pcb-schematic.webp" alt="STM32 原理图" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.classList.add('img-failed');">
                         <span class="hw-img-label">📐 STM32 原理图</span>
                     </div>
-                    <div class="hw-img-box" onclick="openLightbox('51pcb-layout.png')">
-                        <img src="51pcb-layout.png" alt="51 PCB Layout" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
+                    <div class="hw-img-box hw-img-dark" onclick="openLightbox('51pcb-layout.webp')">
+                        <img src="51pcb-layout.webp" alt="51 PCB Layout" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.classList.add('img-failed');">
                         <span class="hw-img-label">💻 51 单片机 PCB Layout 图</span>
                     </div>
 
                     <!-- 第四排：51原理图 -->
-                    <div class="hw-img-box hw-main-img" onclick="openLightbox('51pcb-schematic.png')">
-                        <img src="51pcb-schematic.png" alt="51 原理图" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
+                    <div class="hw-img-box hw-main-img" onclick="openLightbox('51pcb-schematic.webp')">
+                        <img src="51pcb-schematic.webp" alt="51 原理图" loading="lazy" decoding="async" onerror="this.style.display='none'; this.parentElement.classList.add('img-failed');">
                         <span class="hw-img-label">📐 51 单片机原理图</span>
                     </div>
                 </div>
@@ -875,21 +911,27 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        /* --- 5. 滚动进入动画 --- */
+        /* --- 5. 滚动进入动画 ---
+           阈值必须是 0：项目展示这一块在手机上比屏幕高十几倍，
+           如果要求 10% 可见才触发，它的最大可见比例也到不了 10%，动画永远不触发、
+           整块内容就一直停在 opacity:0 —— 表现就是"手机上只剩文字"。 */
         const revealElements = document.querySelectorAll('.reveal');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    revealObserver.unobserve(entry.target);
-                }
+        if ('IntersectionObserver' in window) {
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        revealObserver.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0,
+                rootMargin: "0px 0px -40px 0px"
             });
-        }, {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        });
-
-        revealElements.forEach(el => revealObserver.observe(el));
+            revealElements.forEach(el => revealObserver.observe(el));
+        } else {
+            revealElements.forEach(el => el.classList.add('active'));
+        }
 
         /* --- 6. 演示视频：文件不存在时给出提示，但不破坏页面布局 --- */
         function bindVideoFallback(videoId, fallbackId) {
