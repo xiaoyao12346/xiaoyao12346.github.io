@@ -492,7 +492,6 @@
                 <div class="media-container video-wrap">
                     <video id="deskclock-video"
                            src="deskclock-demo.mp4"
-                           poster="deskclock-poster.jpg"
                            controls
                            playsinline
                            preload="metadata">
@@ -598,7 +597,6 @@
                 <div class="media-container video-wrap">
                     <video id="nailong-video"
                            src="nailong-demo.mp4"
-                           poster="nailong-poster.jpg"
                            controls
                            playsinline
                            preload="metadata">
@@ -687,33 +685,33 @@
                 <div class="hardware-gallery">
                     <!-- 第一排：横跨两列的大图 -->
                     <div class="hw-img-box hw-main-img" onclick="openLightbox('pcb-board.jpg')">
-                        <img src="pcb-board.jpg" alt="STM32焊接实物图" onerror="this.parentElement.style.display='none';">
+                        <img src="pcb-board.jpg" alt="STM32焊接实物图" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
                         <span class="hw-img-label">📸 STM32 核心板打板后焊接完成实物图</span>
                     </div>
 
                     <!-- 第二排：两张实物对比 -->
                     <div class="hw-img-box" onclick="openLightbox('pcb-board2.jpg')">
-                        <img src="pcb-board2.jpg" alt="32与51打样板" onerror="this.parentElement.style.display='none';">
+                        <img src="pcb-board2.jpg" alt="32与51打样板" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
                         <span class="hw-img-label">📸 STM32 与 51 打板裸板 (未焊接)</span>
                     </div>
                     <div class="hw-img-box" onclick="openLightbox('pcb-layout.png')">
-                        <img src="pcb-layout.png" alt="STM32 PCB Layout" onerror="this.parentElement.style.display='none';">
+                        <img src="pcb-layout.png" alt="STM32 PCB Layout" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
                         <span class="hw-img-label">💻 STM32 PCB Layout 图</span>
                     </div>
 
                     <!-- 第三排：原理图 -->
                     <div class="hw-img-box" onclick="openLightbox('pcb-schematic.png')">
-                        <img src="pcb-schematic.png" alt="STM32 原理图" onerror="this.parentElement.style.display='none';">
+                        <img src="pcb-schematic.png" alt="STM32 原理图" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
                         <span class="hw-img-label">📐 STM32 原理图</span>
                     </div>
                     <div class="hw-img-box" onclick="openLightbox('51pcb-layout.png')">
-                        <img src="51pcb-layout.png" alt="51 PCB Layout" onerror="this.parentElement.style.display='none';">
+                        <img src="51pcb-layout.png" alt="51 PCB Layout" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
                         <span class="hw-img-label">💻 51 单片机 PCB Layout 图</span>
                     </div>
 
                     <!-- 第四排：51原理图 -->
                     <div class="hw-img-box hw-main-img" onclick="openLightbox('51pcb-schematic.png')">
-                        <img src="51pcb-schematic.png" alt="51 原理图" onerror="this.parentElement.style.display='none';">
+                        <img src="51pcb-schematic.png" alt="51 原理图" loading="lazy" decoding="async" onerror="this.parentElement.style.display='none';">
                         <span class="hw-img-label">📐 51 单片机原理图</span>
                     </div>
                 </div>
@@ -944,9 +942,21 @@
         }
     </script>
 
-    <!-- GoatCounter 统计代码 -->
-    <script data-goatcounter="https://yao.goatcounter.com/count"
-            async src="//gc.zgo.at/count.js"></script>
+    <!-- GoatCounter 统计代码
+         注意：gc.zgo.at 在国内经常要 3~5 秒才响应第一个字节，如果直接放在页面里，
+         浏览器标签会一直转圈直到它返回。这里改成页面 load 之后再延迟注入，
+         统计照常记录，但不再拖慢首屏。 -->
+    <script>
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                var s = document.createElement('script');
+                s.async = true;
+                s.setAttribute('data-goatcounter', 'https://yao.goatcounter.com/count');
+                s.src = 'https://gc.zgo.at/count.js';
+                document.body.appendChild(s);
+            }, 1500);
+        });
+    </script>
 
 </body>
 </html>
