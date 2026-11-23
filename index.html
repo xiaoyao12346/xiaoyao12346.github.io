@@ -718,6 +718,95 @@
             </div>
             <!-- ================================================================= -->
 
+            <!-- ================= 软件项目：Modbus 边缘 AI 网关 ================= -->
+            <div class="project-card">
+                <div class="project-header">
+                    <span>基于 STM32(从机) 与 ESP32(主机) 的 RS485/Modbus 边缘 AI 网关（独立开发）</span>
+                    <span class="project-tech">STM32F103 / Modbus RTU / ESP32-S3 / TFLite Micro</span>
+                </div>
+                <p><b>项目背景：</b>工业机柜监控长期依赖 if-else 阈值报警，难以覆盖温湿度与电流耦合等复合异常场景，云端推理又面临带宽与时延瓶颈。本项目用 STM32F103 做 Modbus 从站采集传感器数据，ESP32-S3 做 Modbus 主站 + 边缘 AI 推理 + 云端上报，在本地完成「采集 → 推理 → 诊断 → 上云」全链路闭环。</p>
+                <p><b>技术栈：</b>STM32F103C8T6 / FreeModbus RTU / RS485 / ESP32-S3 / FreeRTOS / TensorFlow Lite Micro / cJSON / MQTT / OneNET 物联网平台 / Keil MDK / ESP-IDF</p>
+
+                <!-- 演示视频占位（等你上传） -->
+                <div class="media-container video-wrap">
+                    <video id="modbus-video"
+                           src="modbus-gateway-demo.mp4"
+                           controls
+                           playsinline
+                           preload="metadata">
+                        当前浏览器不支持 HTML5 视频播放。
+                    </video>
+                    <div class="video-fallback" id="modbus-video-fallback">
+                        🎬 演示视频待上传：把 modbus-gateway-demo.mp4 放在本页同一目录即可<br>
+                        （可选）再放一张封面图 modbus-gateway-poster.jpg
+                    </div>
+                </div>
+
+                <h4>✨ 功能详解</h4>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h5>🔌 STM32 Modbus RTU 从站</h5>
+                        <p>基于 FreeModbus 协议栈实现 RTU 从站功能，从站地址 1，UART1 9600 8N1 通信。TIM2 提供 T3.5 帧间超时判断，DWT 计数器实现微秒级延时以保证 DHT11 单总线时序精度。从站独立运行，支持 Modbus Poll 软件直接读取寄存器。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📊 温湿度 + 电流采集</h5>
+                        <p>DHT11 数字温湿度传感器接 PB12 开漏输出 + 内部上拉，ADC1 采集 PA0 电位器模拟量模拟电流互感器输入。采集结果写入保持寄存器：温度×10 存 0 号（250→25.0℃），湿度×10 存 1 号，电流×100 存 2 号（250→2.50A），与 ESP32 主站换算公式严格对齐。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>📡 ESP32 Modbus 主站轮询</h5>
+                        <p>ESP32-S3 通过 UART2（GPIO17 TX / GPIO16 RX）作为 Modbus RTU 主站，每 5 秒轮询从站 0 号起的 3 个保持寄存器。ESP-IDF framework 的 esp_modbus_master API 负责底层帧封装与 CRC16 校验，主机只处理业务逻辑。波特率 9600 8N1，与从站完全匹配。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>⚙️ FreeRTOS 三任务解耦</h5>
+                        <p>三任务通过 <code>QueueHandle_t</code> 串联：<b>modbus_task</b>（优先级 5）负责轮询从站并将原始数据送入队列；<b>consumer_task</b>（优先级 4）消费数据、换算物理量、运行 AI 推理；<b>upload_task</b>（优先级 3）负责 MQTT 上报。低优先级任务不会阻塞高优先级的 Modbus 轮询，保证 5 秒周期稳定。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>🧠 端侧 AI 异常诊断</h5>
+                        <p>TensorFlow Lite Micro 部署量化 MLP 模型，FullyConnected + Softmax 两算子，tensor_arena 仅 4KB，int8 全量化。模型输出 <code>anomaly_prob</code>（异常概率 float）和 <code>is_anomaly</code>（0/1），在本地完成多传感器融合诊断——<b>单次推理平均仅 0.61ms</b>。</p>
+                    </div>
+                    <div class="feature-item">
+                        <h5>☁️ OneNET 云平台上报</h5>
+                        <p>采集数据经 cJSON 封装后通过 MQTT 上报至中国移动 OneNET 平台。三元组（产品ID NhX00u3h8p / 设备名 1 / 密钥）固化固件，HMAC-SHA1 签名 token 有效期至 2033 年。物模型定义 5 属性：temperature、humidity、current（float）、anomaly_prob（float）、is_anomaly（int），每 5 秒周期上报。</p>
+                    </div>
+                </div>
+
+                <div class="spec-line">
+                    <b>规格：</b>STM32F103C8T6（从站，DHT11 + ADC 电流采集）· ESP32-S3（主站，FreeRTOS 3 任务）· UART2 Modbus RTU 9600 8N1 · TFLite Micro int8 量化 MLP（推理 0.61ms）· OneNET MQTT 上云 · ESP32 RAM 峰值约 119KB / 固件约 1MB
+                </div>
+
+                <h4>🔧 技术细节速查</h4>
+                <ul>
+                    <li><b>Modbus 寄存器映射（1-based 坑）：</b>STM32 FreeModbus 回调收到的 usAddress 从 1 开始，故索引计算为 <code>iRegIndex = usAddress - REG_HOLDING_START</code>；从站数组 usRegHoldingBuf 声明 10 项（仅前 3 项有效）。ESP32 主站发 0 号地址，回调收到 1，索引 0，正好对应数组第一个元素。</li>
+                    <li><b>DHT11 采集稳定性：</b>HAL_Delay 只有 1ms 精度，DHT11 应答和数据位要求 26μs / 70μs 分辨率，改用 DWT 计数器实现微秒级延时。读 40bit 数据时<b>关中断</b>（SysTick + Modbus 中断合计约 5ms）防止时序被打断，校验失败保留默认值（温度 250 / 湿度 600）避免主站读到零值。</li>
+                    <li><b>Flash 分区与编译坑：</b>ESP32-S3 固件约 1007KB，sdkconfig 中将 Flash 总容量扩至 16MB。原方案启用 ccache 加速编译，但 ccache 缓存损坏后编译报错找不到目标文件，改用 <code>-DCCACHE_ENABLE=0</code> 禁用 ccache。Windows PowerShell 7 下不能用 IDF 的 export.ps1（StandardOutputEncoding bug），必须手动设环境变量。</li>
+                    <li><b>串口冲突处理：</b>ESP32-S3 板载 CH340 硬连 GPIO43/44（UART0），且该板原生 USB 口不支持烧录。原计划 Modbus 走 UART0、日志走 USB-Serial-JTAG，实测烧录只能走 CH340，故 Modbus 改到 UART2（GPIO17/16），日志保留 UART0（COM19 @ 115200）。</li>
+                </ul>
+
+                <h4>⚖️ 项目优缺点</h4>
+                <p><b>优点</b></p>
+                <ul>
+                    <li><b>真实双机联调验证：</b>STM32 从站 + ESP32 主站 + Modbus Slave 软件三方测试，主站轮询 CRC 校验、从站应答、寄存器读写全链路打通。ESP32 日志确认每 5 秒正确读到 3 个寄存器值并换算成物理量（温度 30.0 / 湿度 50.0 / 电流 2.50A）。</li>
+                    <li><b>边缘推理低延迟：</b>TFLite Micro 模型仅 4KB tensor_arena，单次推理平均 0.61ms，采集→云端 publish 约 39ms，远快于云端推理链路。网络波动不影响本地诊断决策。</li>
+                    <li><b>资源利用克制：</b>ESP32-S3 侧 RAM 峰值约 119KB / 512KB，固件约 1MB / 16MB；STM32F103C8T6 资源更紧张，FreeModbus + ADC + DHT11 也只用到一半 Flash。为后续扩展预留充足余量。</li>
+                    <li><b>任务解耦清晰：</b>三 FreeRTOS 任务通过队列串联，低优先级的 AI 推理和云端上报不会阻塞高优先级的 Modbus 轮询，保证 5 秒周期稳定。</li>
+                </ul>
+                <p><b>缺点与改进方向</b></p>
+                <ul>
+                    <li><b>RS485 DE/RE 未接入：</b>STM32 portserial.c 当前是 TTL 直连（或自动方向模块），普通 MAX485 模块需额外 DE 引脚控制（如 PB13）。→ 增加 PB13 DE 控制，支持半双工 RS485 总线。</li>
+                    <li><b>AI 模型无真实数据集验证：</b>简历里的"92% 准确率"没有真实数据集支撑，属于待补齐项。→ 采集多组正常/异常温湿度+电流样本，标注后重新训练并测真实准确率。</li>
+                    <li><b>无 OTA 升级路径：</b>Flash 分区已扩至 16MB，预留充足空间做 OTA 但尚未实现固件远程升级。→ 增加 OTA 分区 + OneNET OTA 通道。</li>
+                    <li><b>WiFi 依赖手机热点：</b>热点 DHCP 偶发失败，换真实路由器后应更稳定。→ 固定部署场景下改用有线或企业级 WiFi。</li>
+                </ul>
+
+                <h4>🚀 后续再开发</h4>
+                <ul>
+                    <li>采集真实场景的正常/异常样本，重新训练 AI 模型并验证准确率。</li>
+                    <li>增加 OTA 远程升级，支持 OneNET 云平台直接推送固件。</li>
+                    <li>RS485 总线支持多从站（目前只有 1 个），构建完整工业总线拓扑。</li>
+                </ul>
+            </div>
+            <!-- ================================================================= -->
+
             <!-- ================= PCB 硬件项目卡片 ================= -->
             <div class="project-card">
                 <div class="project-header">
@@ -954,6 +1043,7 @@
         }
         bindVideoFallback('deskclock-video', 'video-fallback');
         bindVideoFallback('nailong-video', 'nailong-video-fallback');
+        bindVideoFallback('modbus-video', 'modbus-video-fallback');
 
         /* --- 7. 一键复制功能 --- */
         function copyToClipboard(text, btnElement) {
