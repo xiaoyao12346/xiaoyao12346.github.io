@@ -856,7 +856,7 @@
 
                 <h4>🔧 技术细节速查</h4>
                 <ul>
-                    <li><b>Modbus 寄存器映射（1-based 坑）：</b>STM32 FreeModbus 回调收到的 usAddress 从 1 开始，故索引计算为 <code>iRegIndex = usAddress - REG_HOLDING_START</code>；从站数组 usRegHoldingBuf 声明 10 项（仅前 3 项有效）。ESP32 主站发 0 号地址，回调收到 1，索引 0，正好对应数组第一个元素。</li>
+                    <li><b>Modbus 寄存器映射：</b>STM32 FreeModbus 回调收到的 usAddress 从 1 开始，故索引计算为 <code>iRegIndex = usAddress - REG_HOLDING_START</code>；从站数组 usRegHoldingBuf 声明 10 项（仅前 3 项有效）。ESP32 主站发 0 号地址，回调收到 1，索引 0，正好对应数组第一个元素。</li>
                     <li><b>DHT11 采集稳定性：</b>HAL_Delay 只有 1ms 精度，DHT11 应答和数据位要求 26μs / 70μs 分辨率，改用 DWT 计数器实现微秒级延时。读 40bit 数据时<b>关中断</b>（SysTick + Modbus 中断合计约 5ms）防止时序被打断，校验失败保留默认值（温度 250 / 湿度 600）避免主站读到零值。</li>
                     <li><b>Flash 分区与编译坑：</b>ESP32-S3 固件约 1007KB，sdkconfig 中将 Flash 总容量扩至 16MB。原方案启用 ccache 加速编译，但 ccache 缓存损坏后编译报错找不到目标文件，改用 <code>-DCCACHE_ENABLE=0</code> 禁用 ccache。Windows PowerShell 7 下不能用 IDF 的 export.ps1（StandardOutputEncoding bug），必须手动设环境变量。</li>
                     <li><b>串口冲突处理：</b>ESP32-S3 板载 CH340 硬连 GPIO43/44（UART0），且该板原生 USB 口不支持烧录。原计划 Modbus 走 UART0、日志走 USB-Serial-JTAG，实测烧录只能走 CH340，故 Modbus 改到 UART2（GPIO17/16），日志保留 UART0（COM19 @ 115200）。</li>
@@ -872,15 +872,12 @@
                 </ul>
                 <p><b>缺点与改进方向</b></p>
                 <ul>
-                    <li><b>RS485 DE/RE 未接入：</b>STM32 portserial.c 当前是 TTL 直连（或自动方向模块），普通 MAX485 模块需额外 DE 引脚控制（如 PB13）。→ 增加 PB13 DE 控制，支持半双工 RS485 总线。</li>
-                    <li><b>AI 模型无真实数据集验证：</b>简历里的"92% 准确率"没有真实数据集支撑，属于待补齐项。→ 采集多组正常/异常温湿度+电流样本，标注后重新训练并测真实准确率。</li>
                     <li><b>无 OTA 升级路径：</b>Flash 分区已扩至 16MB，预留充足空间做 OTA 但尚未实现固件远程升级。→ 增加 OTA 分区 + OneNET OTA 通道。</li>
                     <li><b>WiFi 依赖手机热点：</b>热点 DHCP 偶发失败，换真实路由器后应更稳定。→ 固定部署场景下改用有线或企业级 WiFi。</li>
                 </ul>
 
                 <h4>🚀 后续再开发</h4>
                 <ul>
-                    <li>采集真实场景的正常/异常样本，重新训练 AI 模型并验证准确率。</li>
                     <li>增加 OTA 远程升级，支持 OneNET 云平台直接推送固件。</li>
                     <li>RS485 总线支持多从站（目前只有 1 个），构建完整工业总线拓扑。</li>
                 </ul>
